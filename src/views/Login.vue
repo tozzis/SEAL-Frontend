@@ -13,7 +13,15 @@
                 <v-text-field v-model="password" prepend-icon="lock" name="password" label="Password" id="password" type="password" @keyup.enter.native="loginAuthen()"></v-text-field>
               </v-form>
             </v-card-text>
-              <v-btn color="rgb(163,190,140)" @click="loginAuthen()">Login</v-btn>
+              <v-btn
+               :loading="loading"
+               :disabled="loading"
+               color="rgb(163,190,140)" @click="loginAuthen()">
+                Login
+                <span slot="loader" class="custom-loader">
+                  <v-icon light>cached</v-icon>
+                </span>
+              </v-btn>
               <hr/>
           </v-card>
           <!-- Detail for person who already login-->
@@ -48,7 +56,8 @@ export default {
       alreadyLogin: false,
       authorized: false,
       username: '',
-      password: ''
+      password: '',
+      loading: false
     }
   },
   computed: {
@@ -67,6 +76,7 @@ export default {
       }
     },
     loginAuthen: async function () {
+      this.loading = true
       let id = this.username
       let password = this.password
       let userAuthentication = await axios.post(process.env.VUE_APP_USER_SERVICE_URL + '/user/login',
@@ -76,6 +86,7 @@ export default {
         }
       ).catch((error)=>{
           this.$swal('กรุณา login ใหม่', error.response.data.message , 'error');
+          this.loading = false
       })
       userAuthentication = userAuthentication.data
       let jwtTokenLocalStorage = localStorage.getItem('jwtToken')
@@ -131,6 +142,43 @@ export default {
 
   .v-btn {
     width: 80%;
+  }
+
+  .custom-loader {
+    animation: loader 1s infinite;
+    display: flex;
+  }
+  @-moz-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 </style>
 
