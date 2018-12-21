@@ -11,7 +11,7 @@
                 <p class="video-name">{{videoDetail.video_name}}</p>
                 <p class="descript-video">
                   <v-icon class="icon-description">person</v-icon>
-                  <!-- {{videoDetail.teacher.teacher_name}} fdsfsd -->
+                  <!-- {{videoDetail.teacher.teacher_name}} -->
                   {{videoDetail.teacherName}}
                 </p>
                 <p class="descript-video">
@@ -21,6 +21,10 @@
                 <p class="descript-video">
                   <v-icon class="icon-description">location_on</v-icon>
                   {{videoDetail.roomName}}
+                </p>
+                <p class="descript-video">
+                  <v-icon class="icon-description">visibility</v-icon>
+                  {{views | formatNumber}} Views
                 </p>
 
             <div>
@@ -87,7 +91,8 @@ export default {
       this.$router.push({ path: '/login' })
     } else {
       this.fetchVideoDetail(),
-      this.getComment()
+      this.getComment(),
+      this.postViews()
     }
   },
   components: {
@@ -117,13 +122,48 @@ export default {
         theme: 'red'
       },
       comment:[],
-      post_comment:null
+      post_comment:null,
+      views:null
     }
   },
   computed: {
     ...mapGetters(['getUser'])
   },
   methods: {
+    getView: async function () {
+      let jwtTokenLocalStorage = localStorage.getItem('jwtToken')
+      this.videoID = this.$route.params.videoID
+      const views = await axios.get(
+            `${process.env.VUE_APP_VIDEO_SERVICE_URL}/views/video/${this.videoID}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${jwtTokenLocalStorage}`
+                }
+            }
+        ).catch((response)=>{
+            localStorage.removeItem('jwtToken')
+            this.$swal('กรุณา login', 'หมดเวลาการใช้งาน', 'error');
+            this.$router.push('/login')
+        })
+        this.views = views.data
+    },
+    postViews: async function () {
+      let jwtTokenLocalStorage = localStorage.getItem('jwtToken')
+      this.videoID = this.$route.params.videoID
+      await axios.post(
+            `${process.env.VUE_APP_VIDEO_SERVICE_URL}/views/video`,{
+              videoId: this.videoID,
+              userId: this.getUser.userId
+            }
+        ).then(()=>{
+          this.getView()
+        })
+        .catch((response)=>{
+            localStorage.removeItem('jwtToken')
+            this.$swal('กรุณา login', 'หมดเวลาการใช้งาน', 'error');
+            this.$router.push('/login')
+        })
+    },
     getComment: async function () {
         let jwtTokenLocalStorage = localStorage.getItem('jwtToken')
         this.videoID = this.$route.params.videoID
@@ -189,6 +229,7 @@ export default {
       this.fetchVideoDetail(videoID)
       this.getComment(videoID)
       this.post_comment = null
+      this.postViews(videoID)
     }
   }
 }
