@@ -8,12 +8,14 @@
         aspect-ratio="2.75"
       ></v-img>
       <v-card-text>
-        <span class="title">{{subjectCode}} || {{getFavorite.subject_id}}</span>
+        <span class="title">{{subjectCode}}</span>
         <br/>
-        <span class="">{{subjectName}}</span>
+        <span>{{subjectName}}</span>
       </v-card-text>
   </router-link>
-    <div v-if="isFavouriteByUser">
+  <v-card-actions>
+    <v-spacer></v-spacer>
+      <div v-if="isFavouriteByUser">
       <v-btn icon @click="disloveFavorite(favouriteId)">
           <v-icon dark color="red">favorite</v-icon>
       </v-btn>
@@ -23,6 +25,8 @@
           <v-icon dark>favorite</v-icon>
       </v-btn>
     </div>
+    <v-spacer></v-spacer>
+  </v-card-actions>
     </v-card>
   </v-hover>
 </template>
@@ -52,16 +56,12 @@ export default {
   methods: {
     ...mapActions(['setHeaderContent','setFavorite']),
     checkSubjectIsFavourited: function(){
-      // console.log('subject-card redered : '+this.subjectID)
       let subjectFavourites = this.getFavorite
-      // console.log(subjectFavourites[0])
-      // console.log('User Fave : '+ subjectFavourites[1])
       for(let i = 0; i < subjectFavourites.length; i++){
         if( subjectFavourites[i].subjectId == this.subjectID){
           console.log(subjectFavourites[i].id)
           this.favouriteId = subjectFavourites[i].id
           this.isFavouriteByUser = true
-          //console.log('Favourited by User : ' + this.subjectID)
         }
       }
     },

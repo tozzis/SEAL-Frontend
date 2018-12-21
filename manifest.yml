@@ -1,9 +1,9 @@
 applications:
-- name: elearning-frontend
+- name: elearning-seal-top
   #random-route: true
   memory:  256M
   path: dist/
-  buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git
+  buildpack: staticfile_buildpack
   env:
     lnwza: linjingyun12
     VUE_APP_TEST: EvanYou
