@@ -154,6 +154,11 @@ export default {
             `${process.env.VUE_APP_VIDEO_SERVICE_URL}/views/video`,{
               videoId: this.videoID,
               userId: this.getUser.userId
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${jwtTokenLocalStorage}`
+                }
             }
         ).then(()=>{
           this.getView()
@@ -188,8 +193,14 @@ export default {
             `${process.env.VUE_APP_VIDEO_SERVICE_URL}/comments/video/${this.videoID}`,{
               userId: this.getUser.userId,
               comment: this.post_comment
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${jwtTokenLocalStorage}`
+                }
             }
         ).then(()=>{
+          this.post_comment = null
           this.getComment()
         })
         .catch((response)=>{
